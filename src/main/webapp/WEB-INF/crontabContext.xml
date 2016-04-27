@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+          
+    <!-- 同步套餐 -->
+    <bean id="syncPackageTask" class="com.qtt.flow.task.SyncPackageTask"/>
+    <bean id="syncPackageJobDetail"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+          p:targetObject-ref="syncPackageTask" p:targetMethod="runTask"/>
+    <bean id="syncPackageJobTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+          p:jobDetail-ref="syncPackageJobDetail"
+          p:cronExpression="0 1 * * * ?"/>
+	      
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref local="syncPackageJobTrigger"/>
+                <!-- <ref local="counterDailyJobTrigger"/>
+                <ref local="counterMonthlyJobTrigger"/> -->
+            </list>
+        </property>
+    </bean>
+</beans>
